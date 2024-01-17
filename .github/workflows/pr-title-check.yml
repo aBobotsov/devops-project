@@ -1,0 +1,16 @@
+---
+name: Github PR title check
+on:
+  pull_request:
+    types: [opened, synchronize, edited, reopened]
+jobs:
+  build:
+    name: Check PR title
+    runs-on: 'ubuntu-20.04'
+    steps:
+      - uses: deepakputhraya/action-pr-title@master
+        with:
+          # Enforcing Jira key format: JIRA-123: Description
+          regex: '^(?<ticket>JIRA-\d{1,5}:)(?<title>.+)$'
+          min_length: 5
+          max_length: 100

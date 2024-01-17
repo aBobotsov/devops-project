@@ -1,0 +1,146 @@
+name: Frontend Workflow
+run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+on:
+#    pull_request:
+#        types: [ opened, synchronize, reopened ]
+  push:
+    paths:
+        - 'fe/src/**'
+
+jobs:
+  Check-editorconfig:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+      # infers python version from .python-version file
+        uses: actions/setup-python@v4
+
+      - uses: editorconfig-checker/action-editorconfig-checker@main
+      - name: Editor config check
+        run: editorconfig-checker
+
+  Markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Lint with Markdown-lint
+        uses: articulate/actions-markdownlint@v1
+        with:
+          config: .markdownlint.yml
+          files: '**/*.md'
+          ignore: node_modules
+
+  Check-hardcoded-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Shallow checkout
+        uses: actions/checkout@v4
+        # with:
+        #   fetch-depth: 1
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  Unit-tests:
+    needs: [Check-editorconfig, Markdown-lint, Check-hardcoded-secrets]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Run unit tests
+        working-directory: ./fe
+        run: |
+          npm test
+
+#  Build-push-docker-image:
+#    needs: [Unit-tests]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout repo
+#        uses: actions/checkout@v4
+#
+#      - name: Log in to Dockerhub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#
+#      - name: Extract metadata
+#        id: meta
+#        uses: docker/metadata-action@v5
+#        with:
+#          images: ${{ secrets.DOCKER_NAMESPACE }}/${{ secrets.DOCKER_REPOSITORY }}
+#          tags: |
+#            type=sha, format=long
+#
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
+#
+#      - name: Build and push docker image
+#        uses: docker/build-push-action@v5
+#        with:
+#          context: .
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
+#          cache-from: type=gha
+#          cache-to: type=gha,mode=max
+#
+#      - name: Run Trivy vulnerability scanner
+#        uses: aquasecurity/trivy-action@master
+#        with:
+#          image-ref: "${{ secrets.DOCKER_NAMESPACE }}/${{ secrets.DOCKER_REPOSITORY }}:sha-${{ github.sha }}"
+#          format: "table"
+#          exit-code: "1"
+#          ignore-unfixed: true
+#          vuln-type: "os,library"
+#          severity: "CRITICAL,HIGH"
+
+
+  # Sonarcloud:
+  #   needs: Unit-tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         # Disabling shallow clone is recommended for improving relevancy of reporting
+  #         fetch-depth: 0
+  #     - name: debug
+  #       run: |
+  #         echo "Current directory: $(pwd)"
+  #         echo "Contents of the directory: $(ls -a)"
+  #         echo "Github token: ${{ secrets.GITHUB_TOKEN }}
+  #         echo "Sonar token: ${{ secrets.SONAR_TOKEN }}
+
+  #     - name: SonarCloud Scan
+  #       uses: sonarsource/sonarcloud-github-action@master
+  #       env:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  #       with:
+  #         args: >
+  #           -Dsonar.verbose=true
+
+  # Snyk:
+  #   needs: Unit-tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@master
+  #     - name: Run Snyk to check for vulnerabilities
+  #       uses: snyk/actions/python@master
+  #       continue-on-error: true # To make sure that SARIF upload gets called
+  #       env:
+  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  #       with:
+  #         args: --severity-threshold=high
+
+  #     - name: Upload result to GitHub Code Scanning
+  #       uses: github/codeql-action/upload-sarif@v2
+  #       with:
+  #         sarif_file: snyk.sarif

@@ -10,6 +10,7 @@ app = Flask(__name__)
 def validate_input():
     try:
         data = request.get_json()
+
         input_value = data.get('input')
 
         # TODO: implement real logic

@@ -4,8 +4,8 @@ on:
 #    pull_request:
 #        types: [ opened, synchronize, reopened ]
   push:
-    paths:
-        - 'be/**'
+#    paths:
+#        - 'be/**'
 
 jobs:
   Check-editorconfig:
@@ -117,7 +117,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: --severity-threshold=high
+          args: -d --severity-threshold=high --file=be/src/requirements.txt
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2

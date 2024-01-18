@@ -87,6 +87,7 @@ jobs:
           pytest test/test_app.py
 
   Sonarcloud:
+    name: SonarCloud scan
     needs: Unit-tests
     runs-on: ubuntu-latest
     steps:
@@ -103,6 +104,25 @@ jobs:
         with:
           args: >
             -Dsonar.verbose=true
+
+  Snyk:
+    name: Snyk security scan
+    needs: Unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python@master
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk.sarif
 
 #  Build-push-docker-image:
 #    needs: [Unit-tests]
@@ -150,20 +170,4 @@ jobs:
 
 
 
-  # Snyk:
-  #   needs: Unit-tests
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@master
-  #     - name: Run Snyk to check for vulnerabilities
-  #       uses: snyk/actions/python@master
-  #       continue-on-error: true # To make sure that SARIF upload gets called
-  #       env:
-  #         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-  #       with:
-  #         args: --severity-threshold=high
 
-  #     - name: Upload result to GitHub Code Scanning
-  #       uses: github/codeql-action/upload-sarif@v2
-  #       with:
-  #         sarif_file: snyk.sarif

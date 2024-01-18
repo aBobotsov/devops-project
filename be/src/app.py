@@ -11,7 +11,6 @@ def validate_input():
     try:
         data = request.get_json()
         input_value = data.get("input")
-
         # TODO: implement real logic
         is_valid = int(input_value) % 2 == 0
 

@@ -23,7 +23,7 @@ jobs:
         run: editorconfig-checker
 
   Lint:
-    name: Lint with Ruff & commit
+    name: Lint with Ruff & auto-commit fixes
     runs-on: ubuntu-latest
     permissions:
       # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
@@ -39,7 +39,7 @@ jobs:
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: 'style fixes by ruff'
+          commit_message: 'CI style fixes by ruff'
 
 #  Pylint:
 #    runs-on: ubuntu-latest

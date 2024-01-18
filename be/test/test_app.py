@@ -13,6 +13,7 @@ def client():
 
 
 def test_valid_input(client: FlaskClient):
+
     response = client.post(
         '/validate',
         data=json.dumps({'input': '2'}),

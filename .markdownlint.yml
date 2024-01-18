@@ -11,4 +11,7 @@ MD013:
 MD022:
   lines_above: 1
   lines_below: 0
+MD026: false # trailing punctuation allowed heading
+MD031: false # no blank lines surrounding code blocks
 MD032: false # no blank lines surrounding lists
+MD041: false # no top-level heading

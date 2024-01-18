@@ -16,6 +16,7 @@ def test_valid_input(client: FlaskClient):
     response = client.post(
         "/validate", data=json.dumps({"input": "2"}), content_type="application/json"
     )
+
     data = json.loads(response.data.decode())
     assert response.status_code == 200
     assert data["isValid"]

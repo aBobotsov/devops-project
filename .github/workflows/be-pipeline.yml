@@ -94,7 +94,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   Unit-tests:
-    needs: [Check-editorconfig, Pylint, Black, Markdown-lint, Check-hardcoded-secrets]
+    needs: [Check-editorconfig, Lint, Markdown-lint, Check-hardcoded-secrets]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo

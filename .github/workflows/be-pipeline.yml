@@ -152,7 +152,7 @@ jobs:
         with:
           images: ${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_REPOSITORY }}
           tags: |
-            type=sha, format=long
+            type=sha
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2

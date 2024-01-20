@@ -169,6 +169,11 @@ jobs:
 
       - name: Print image-ref debug
         run: |
+          echo "DOCKER_NAMESPACE=${{ vars.DOCKER_NAMESPACE }}"
+          echo "DOCKER_REPOSITORY=${{ vars.DOCKER_REPOSITORY }}"
+          echo "github.sha=${{ github.sha }}"
+          echo "repo+sha=${{ vars.DOCKER_REPOSITORY }}:sha-${{ github.sha }}"
+          echo "second repo+sha=${{vars.DOCKER_REPOSITORY}}:sha-${{github.sha}}"
           echo "docker.io/${{ vars.DOCKER_NAMESPACE }}/${{ vars.DOCKER_REPOSITORY }}:sha-${{ github.sha }}"
 
       - name: Run Trivy vulnerability scanner

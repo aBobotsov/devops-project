@@ -150,9 +150,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.DOCKER_NAMESPACE }}/${{ env.DOCKER_REPOSITORY }}
+          images: ${{ vars.DOCKER_NAMESPACE }}/${{ vars.DOCKER_REPOSITORY }}
           tags: |
-            type=sha
+            type=sha, format=long
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

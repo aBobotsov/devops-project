@@ -167,6 +167,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Print image-ref debug
+        run: |
+          echo "docker.io/${{ vars.DOCKER_NAMESPACE }}/${{ vars.DOCKER_REPOSITORY }}:sha-${{ github.sha }}"
+
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:

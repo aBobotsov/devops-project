@@ -1,4 +1,3 @@
----
 name: Github PR title check
 on:
   pull_request:

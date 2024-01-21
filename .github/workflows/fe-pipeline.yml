@@ -49,6 +49,9 @@ jobs:
     name: FE Unit tests
 #    needs: [Check-editorconfig, Markdown-lint, Check-hardcoded-secrets]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./fe
     steps:
       - uses: actions/checkout@v4
       - name: Setup node
@@ -56,9 +59,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-          cache-dependency-path: ./fe
       - name: Install deps and run tests
-        working-directory: ./fe
         run: |
           echo workspace=${{ github.workspace }}
           echo listing files:

@@ -16,7 +16,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup python
-      # infers python version from .python-version file
         uses: actions/setup-python@v4
 
       - uses: editorconfig-checker/action-editorconfig-checker@main

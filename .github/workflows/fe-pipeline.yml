@@ -55,6 +55,7 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
+      - name: Install deps and run tests
         working-directory: ./fe
         run: |
           npm ci

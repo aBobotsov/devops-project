@@ -4,8 +4,8 @@ on:
 #    pull_request:
 #        types: [ opened, synchronize, reopened ]
   push:
-#    paths:
-#        - 'be/**'
+    paths:
+        - 'be/**'
 
 jobs:
   editorconfig:

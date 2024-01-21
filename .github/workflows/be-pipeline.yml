@@ -154,7 +154,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ vars.DOCKER_NAMESPACE }}/${{ vars.DOCKER_REPOSITORY_BE }}
+          images: ${{ vars.DOCKERHUB_NAMESPACE }}/${{ vars.DOCKERHUB_REPOSITORY_BE }}
           tags: |
             type=sha, format=long
 
@@ -174,7 +174,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "docker.io/${{ vars.DOCKER_NAMESPACE }}/${{ vars.DOCKER_REPOSITORY_BE }}:sha-${{ github.sha }}"
+          image-ref: "docker.io/${{ vars.DOCKERHUB_NAMESPACE }}/${{ vars.DOCKERHUB_REPOSITORY_BE }}:sha-${{ github.sha }}"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true

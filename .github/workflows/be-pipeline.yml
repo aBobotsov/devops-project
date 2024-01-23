@@ -118,11 +118,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           cache: 'pip'
-          python-version: 3.9
       - name: Install dependencies
+        working-directory: ./be/src
         run: |
           python -m pip install --upgrade pip
-          pip install -r ./be/src/requirements.txt || { echo "Failed to install dependencies" ; exit 1; }
+          pip install -r requirements.txt || { echo "Failed to install dependencies" ; exit 1; }
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/python@master
@@ -131,8 +131,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
           ACTIONS_STEP_DEBUG: true
         with:
-          args: -d --severity-threshold=high --file=be/src/requirements.txt --package-manager=pip --detection-depth=5
-
+          args: -d --severity-threshold=high
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2

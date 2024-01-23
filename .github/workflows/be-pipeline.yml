@@ -128,7 +128,7 @@ jobs:
         uses: snyk/actions/setup@master
       - name: Snyk test
         working-directory: ./be/src
-        run: snyk test -d --severity-threshold=high
+        run: snyk test -d --severity-threshold=high --sarif-file-output=snyk.sarif
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}

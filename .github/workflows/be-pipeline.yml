@@ -136,8 +136,7 @@ jobs:
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2
         with:
-          checkout_path: ./be/src
-          sarif_file: snyk.sarif
+          sarif_file: ./be/src/snyk.sarif
 
 #  build-image:
 #    name: Build, push and scan docker image

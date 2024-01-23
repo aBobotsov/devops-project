@@ -128,8 +128,10 @@ jobs:
         continue-on-error: true # To make sure that SARIF upload gets called
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          ACTIONS_STEP_DEBUG: true
         with:
-          args: -d --print-deps --severity-threshold=high --file=be/src/requirements.txt --package-manager=pip --detection-depth=5
+          args: -d --severity-threshold=high --file=be/src/requirements.txt --package-manager=pip --detection-depth=5
+
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2

@@ -129,7 +129,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
-          args: -d --print-deps --severity-threshold=high --file=be/src/requirements.txt --package-manager=pip
+          args: -d --print-deps --severity-threshold=high --file=be/src/requirements.txt --package-manager=pip --detection-depth=5
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v2

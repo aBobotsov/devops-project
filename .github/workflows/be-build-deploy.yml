@@ -1,5 +1,5 @@
-name: Deploy Workflow
-run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+name: Deploy Backend Workflow
+run-name: Deploy Backend to ${{ inputs.deploy_target }} by @${{ github.actor }}
 on:
   push:
     branches:

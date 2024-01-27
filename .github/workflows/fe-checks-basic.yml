@@ -1,0 +1,65 @@
+name: Basic Frontend Checks
+run-name: ${{github.event_name}} by @${{ github.actor }}
+on:
+  workflow_call:
+  push:
+    paths:
+      - 'fe/**'
+    branches-ignore:
+      - master # should be protected
+
+jobs:
+  Check-editorconfig:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+
+      - uses: editorconfig-checker/action-editorconfig-checker@main
+      - name: Editor config check
+        run: editorconfig-checker
+
+  Markdown-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Lint with Markdown-lint
+        uses: articulate/actions-markdownlint@v1
+        with:
+          config: .markdownlint.yml
+          files: '**/*.md'
+          ignore: node_modules
+
+  Check-hardcoded-secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Shallow checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tests:
+    name: FE Unit tests
+    needs: [ Check-editorconfig, Markdown-lint, Check-hardcoded-secrets ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: Install deps and run tests
+        working-directory: ./fe
+        run: |
+          npm ci
+          npm test

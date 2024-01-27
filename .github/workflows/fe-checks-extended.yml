@@ -1,0 +1,33 @@
+name: Extended Backend Checks
+run-name: ${{github.event_name}} by @${{ github.actor }}
+on:
+  workflow_call:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    paths:
+      - 'fe/**'
+
+jobs:
+  call-basic-fe-check-workflow:
+    uses: ./.github/workflows/fe-checks-basic.yml
+
+  sonar:
+    name: SonarCloud scan
+    needs: [call-basic-fe-check-workflow]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.verbose=true
+
+# TODO: add snyk

@@ -29,7 +29,6 @@ function App() {
       const data = await response.json();
 
       // Update validation result based on backend response
-
       setValidationResult(data.isValid ? 'Valid' : 'Invalid');
     } catch (error) {
       console.error('Error validating input:', error);

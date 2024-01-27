@@ -8,7 +8,7 @@ on:
       - 'fe/**'
 
 jobs:
-  call-basic-be-check-workflow:
+  call-basic-fe-check-workflow:
     uses: ./.github/workflows/fe-checks-basic.yml
 
   sonar:

@@ -4,7 +4,7 @@ on:
   workflow_call:
   push:
     paths:
-        - 'fe/**'
+      - 'fe/**'
     branches-ignore:
       - master # should be protected
 
@@ -40,15 +40,15 @@ jobs:
     steps:
       - name: Shallow checkout
         uses: actions/checkout@v4
-        # with:
-        #   fetch-depth: 1
+        with:
+          fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   tests:
     name: FE Unit tests
-    needs: [Check-editorconfig, Markdown-lint, Check-hardcoded-secrets]
+    needs: [ Check-editorconfig, Markdown-lint, Check-hardcoded-secrets ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

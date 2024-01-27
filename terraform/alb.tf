@@ -28,8 +28,7 @@ resource "aws_lb_target_group" "ecs_tg" {
   target_type = "ip"
   vpc_id      = aws_vpc.vpc.id
 
-  # TODO: check about health checks
-#  health_check {
-#    path = "/"
-#  }
+  health_check {
+    path = "/"
+  }
 }

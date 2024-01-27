@@ -18,7 +18,7 @@ resource "aws_autoscaling_group" "ecs_asg" {
 
 resource "aws_launch_template" "ecs_lt" {
   name_prefix            = "ecs-template"
-  image_id               = "ami-0d0b75c8c47ed0edf"
+  image_id               = var.ecs_optimised_ami
   instance_type          = var.fe_instance_type
   key_name               = "tf_key"
   vpc_security_group_ids = [aws_security_group.security_group.id]
@@ -44,6 +44,5 @@ resource "aws_launch_template" "ecs_lt" {
     }
   }
 
-  # TODO: read about this
   user_data = filebase64("${path.module}/ecs.sh")
 }

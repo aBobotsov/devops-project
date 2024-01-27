@@ -25,7 +25,6 @@ function App() {
       if (!response.ok) {
         throw new Error(`Validation failed: ${response.statusText}`);
       }
-
       const data = await response.json();
 
       // Update validation result based on backend response

@@ -18,3 +18,5 @@ EXPOSE 3000
 
 # Define the command to run the application
 CMD ["npm", "start"]
+
+HEALTHCHECK CMD curl --fail http://localhost:3000 || exit 1

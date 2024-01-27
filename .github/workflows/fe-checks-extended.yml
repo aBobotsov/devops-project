@@ -13,6 +13,7 @@ jobs:
 
   sonar:
     name: SonarCloud scan
+    needs: [call-basic-fe-check-workflow]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

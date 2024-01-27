@@ -1,0 +1,91 @@
+name: Basic Backend Checks
+run-name: BE Checks for Push to ${{ github.base_ref }} by @${{ github.actor }}
+on:
+  workflow_call:
+  push:
+    paths:
+      - 'be/**'
+    branches-ignore:
+      - master # should be protected
+
+jobs:
+  editorconfig:
+    name: Check editorconfig
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+
+      - uses: editorconfig-checker/action-editorconfig-checker@main
+      - name: Editor config check
+        run: editorconfig-checker
+
+  lint:
+    name: Lint with Ruff & auto-commit fixes
+    runs-on: ubuntu-latest
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the changed files back to the repository.
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+
+      - run: pip install ruff
+      - run: |
+          ruff check --fix
+          ruff format .
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: 'CI style fixes by ruff'
+
+  md-lint:
+    name: Lint for Markdowns
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Lint with Markdown-lint
+        uses: articulate/actions-markdownlint@v1
+        with:
+          config: .markdownlint.yml
+          files: '**/*.md'
+          ignore: node_modules
+
+  secrets:
+    name: Check for hardcoded secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Shallow checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  tests:
+    name: BE Unit tests
+    needs: [ editorconfig, lint, md-lint, secrets ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          cache: 'pip'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ./be/test/requirements.txt || { echo "Failed to install test dependencies" ; exit 1; }
+
+      - name: Run unit tests with pytest
+        working-directory: ./be
+        run: |
+          pytest test/test_app.py

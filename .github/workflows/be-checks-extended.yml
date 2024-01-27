@@ -1,0 +1,59 @@
+name: Extended Backend Checks
+run-name: BE checks for PR from ${{ github.head_ref }} to ${{ github.base_ref }} by @${{ github.actor }}
+on:
+  workflow_call:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    paths:
+      - 'be/**'
+
+jobs:
+  call-basic-be-check-workflow:
+    uses: ./.github/workflows/be-checks-basic.yml
+
+  sonar:
+    name: SonarCloud scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.verbose=true
+
+  snyk:
+    name: Snyk security scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          cache: 'pip'
+      - name: Install dependencies
+        working-directory: ./be/src
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt || { echo "Failed to install dependencies" ; exit 1; }
+
+      - name: Setup Snyk
+        uses: snyk/actions/setup@master
+      - name: Snyk test
+        working-directory: ./be/src
+        run: snyk test -d --severity-threshold=high --sarif-file-output=snyk.sarif
+        continue-on-error: true # To make sure that SARIF upload gets called
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Upload result to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: ./be/src/snyk.sarif

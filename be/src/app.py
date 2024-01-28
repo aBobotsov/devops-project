@@ -19,5 +19,11 @@ def validate_input():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/health", methods=["GET"])
+@cross_origin()
+def health_check():
+    return jsonify({"status": "ok"}), 200
+
+
 if __name__ == "__main__":
     app.run(port=os.environ.get("PORT", 5000), host="0.0.0.0")

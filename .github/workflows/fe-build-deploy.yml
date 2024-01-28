@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'fe/**'
 
 jobs:
   build-image:
@@ -76,7 +78,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Terraform apply
-        run: terraform apply -auto-approve -var fe_image_tag="${{github.sha}}"
+        run: terraform apply -auto-approve -var fe_image_tag="sha-${{github.sha}}"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

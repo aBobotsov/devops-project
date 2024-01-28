@@ -17,6 +17,7 @@ resource "aws_ecs_task_definition" "ecs_fe_task_definition" {
         {
           containerPort = 3000
           hostPort      = 3000
+          name          = "fe-port"
           protocol      = "tcp"
         }
       ]
@@ -43,6 +44,7 @@ resource "aws_ecs_task_definition" "ecs_be_task_definition" {
         {
           containerPort = 5000
           hostPort      = 5000
+          name          = "be-port"
           protocol      = "tcp"
         }
       ]

@@ -60,6 +60,7 @@ jobs:
           severity: "CRITICAL"
 
   deploy:
+    needs: build-image
     name: Provision infra and deploy app
     runs-on: ubuntu-latest
     defaults:

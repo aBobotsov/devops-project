@@ -11,3 +11,5 @@ COPY src/app.py .
 EXPOSE 5000
 
 CMD ["python", "app.py"]
+
+HEALTHCHECK CMD curl --fail http://localhost:5000 || exit 1

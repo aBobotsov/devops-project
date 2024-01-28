@@ -14,7 +14,7 @@ function App() {
   const handleValidateClick = async () => {
     try {
       // Send input to backend for validation
-      const response = await fetch('http://127.0.0.1:5000/validate', {
+      const response = await fetch('http://be-service.demo/validate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

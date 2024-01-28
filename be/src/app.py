@@ -20,7 +20,6 @@ def validate_input():
 
 
 @app.route("/health", methods=["GET"])
-@cross_origin()
 def health_check():
     return jsonify({"status": "ok"}), 200
 

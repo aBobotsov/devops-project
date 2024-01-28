@@ -8,7 +8,6 @@ resource "aws_vpc" "vpc" {
 
 resource "aws_subnet" "primary" {
   vpc_id                  = aws_vpc.vpc.id
-  # TODO: check cidrsubnet function
   cidr_block              = cidrsubnet(aws_vpc.vpc.cidr_block, 8, 1)
   map_public_ip_on_launch = true
   availability_zone       = var.az_main

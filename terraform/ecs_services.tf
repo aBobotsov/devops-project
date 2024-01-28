@@ -21,7 +21,7 @@ resource "aws_ecs_service" "ecs_fe_service" {
   Useful when using tags like "latest" to force
   the fetch from the registry and deploy the change
   */
-  force_new_deployment = true
+  #  force_new_deployment = true
 
   # run each task (container) on separate instance
   placement_constraints {
@@ -70,7 +70,7 @@ resource "aws_ecs_service" "ecs_be_service" {
   Useful when using tags like "latest" to force
   the fetch from the registry and deploy the change
   */
-  force_new_deployment = true
+  #  force_new_deployment = true
 
   # run each task (container) on separate instance
   placement_constraints {

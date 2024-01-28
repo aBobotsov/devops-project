@@ -1,11 +1,13 @@
 name: Deploy Backend Workflow
-run-name: Deploy Backend to ${{ inputs.deploy_target }} by @${{ github.actor }}
+run-name: ${{github.event_name}} by @${{ github.actor }}
 on:
   push:
     branches:
       - master
+    paths:
+      - 'be/**'
 
-# can't believe my eyes -> https://github.com/orgs/community/discussions/41518
+# https://github.com/orgs/community/discussions/41518
 # currently Pending concurrent workflows are cancelled and this is not configurable.
 # The following workarounds exist to achieve deployment queues:
 # - running the workflow on a single self-hosted runner
@@ -60,11 +62,33 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: "docker.io/${{ vars.DOCKERHUB_NAMESPACE }}/${{ vars.DOCKERHUB_REPOSITORY_BE }}:sha-${{ github.sha }}"
+          image-ref: "docker.io/${{ vars.DOCKERHUB_NAMESPACE }}/${{ vars.DOCKERHUB_REPOSITORY_BE }}:${{ github.sha }}"
           format: "table"
           exit-code: "1"
           ignore-unfixed: true
           vuln-type: "os,library"
           severity: "HIGH,CRITICAL"
 
-          # TODO: add deployment with terraform
+  deploy:
+    name: Provision infra and deploy app
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+
+      - name: Terraform init
+        run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve -var be_image_tag="sha-${{github.sha}}"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

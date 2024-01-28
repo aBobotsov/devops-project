@@ -1,6 +1,7 @@
 default: true
+MD007: false
 MD013:
-  line_length: 120
+  line_length: 180
   heading_line_length: 80
   code_block_line_length: 120
   code_blocks: true

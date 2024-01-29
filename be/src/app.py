@@ -14,6 +14,7 @@ def validate_input():
 
         # TODO: implement real logic
         is_valid = int(input_value) % 2 == 0
+
         return jsonify({"isValid": is_valid})
     except Exception as e:
         return jsonify({"error": str(e)}), 500

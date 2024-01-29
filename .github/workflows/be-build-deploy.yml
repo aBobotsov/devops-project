@@ -72,7 +72,6 @@ jobs:
   deploy:
     needs: build-image
     name: Provision infra and deploy app
-    needs: build-image
     runs-on: ubuntu-latest
     defaults:
       run:
